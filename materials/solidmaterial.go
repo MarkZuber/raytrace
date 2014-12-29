@@ -1,11 +1,15 @@
 package materials
 
+import (
+	"github.com/MarkZuber/raytrace"
+)
+
 type SolidMaterial struct {
 	gloss        float64
 	transparency float64
 	reflection   float64
 	refraction   float64
-	color        DoubleColor
+	color        raytrace.DoubleColor
 }
 
 func (sm *SolidMaterial) Gloss() float64 {
@@ -44,6 +48,6 @@ func (sm *SolidMaterial) HasTexture() bool {
 	return false
 }
 
-func (sm *SolidMaterial) GetColor(u float64, v float64) DoubleColor {
+func (sm *SolidMaterial) GetColor(u float64, v float64) raytrace.DoubleColor {
 	return sm.color
 }

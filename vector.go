@@ -11,6 +11,10 @@ type Vector struct {
 	z float64
 }
 
+func CreateVector(x float64, y float64, z float64) Vector {
+	return Vector{x, y, z}
+}
+
 func (v Vector) X() float64 {
 	return v.x
 }

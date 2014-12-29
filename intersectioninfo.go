@@ -29,6 +29,10 @@ func (i *IntersectionInfo) IsHit() bool {
 	return i.isHit
 }
 
+func (i *IntersectionInfo) SetIsHit(value bool) {
+	i.isHit = value
+}
+
 func (i *IntersectionInfo) HitCount() int {
 	return i.hitCount
 }
@@ -41,12 +45,24 @@ func (i *IntersectionInfo) Element() IShape {
 	return i.element
 }
 
+func (i *IntersectionInfo) SetElement(value IShape) {
+	i.element = value
+}
+
 func (i *IntersectionInfo) Position() Vector {
 	return i.position
 }
 
+func (i *IntersectionInfo) SetPosition(value Vector) {
+	i.position = value
+}
+
 func (i *IntersectionInfo) Normal() Vector {
 	return i.normal
+}
+
+func (i *IntersectionInfo) SetNormal(value Vector) {
+	i.normal = value
 }
 
 func (i *IntersectionInfo) Color() DoubleColor {

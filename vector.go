@@ -67,6 +67,6 @@ func (v Vector) Magnitude() float64 {
 	return math.Sqrt((v.x * v.x) + (v.y * v.y) + (v.z * v.z))
 }
 
-func (v *Vector) String() string {
+func (v Vector) String() string {
 	return fmt.Sprintf("(%.3f, %.3f, %.3f)", v.x, v.y, v.z)
 }

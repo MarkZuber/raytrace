@@ -1,6 +1,7 @@
 package raytrace
 
 import (
+	"fmt"
 	"image"
 	"image/color"
 	"math"
@@ -22,11 +23,15 @@ func CreateRayTracer(viewport image.Rectangle, scene *Scene) *RayTracer {
 
 func (rt *RayTracer) SimpleRender(image *image.RGBA) {
 	for y := 0; y < image.Bounds().Size().Y; y++ {
+		// fmt.Printf("Rendering line: %d\n", y)
+		fmt.Printf(".")
 		for x := 0; x < image.Bounds().Size().X; x++ {
 			color := rt.GetPixelColor(x, y)
+			// fmt.Printf("Setting (%d, %d) to %v\n", x, y, color)
 			image.Set(x, y, color)
 		}
 	}
+	fmt.Println()
 }
 
 func (rt *RayTracer) SetViewport(viewport image.Rectangle) {
@@ -49,18 +54,6 @@ func (rt *RayTracer) GetRgssOffsets(quality int) []Point {
 	sampleCount := quality * quality
 	samplesArray := make([]Point, sampleCount)
 
-	/*
-	   if (sampleCount < 1)
-	   {
-	       throw new ArgumentOutOfRangeException("sampleCount", "sampleCount must be [0, int.MaxValue]");
-	   }
-
-	   if (sampleCount != quality * quality)
-	   {
-	       throw new ArgumentOutOfRangeException("sampleCount != (quality * quality)");
-	   }
-	*/
-
 	if sampleCount == 1 {
 		samplesArray[0] = Point{0.0, 0.0}
 	} else {
@@ -77,9 +70,9 @@ func (rt *RayTracer) GetRgssOffsets(quality int) []Point {
 	return samplesArray
 }
 
-func BlendColors(colors []color.RGBA) color.RGBA {
+func BlendColors(colors []color.RGBA64) color.RGBA64 {
 	if len(colors) == 0 {
-		return color.RGBA{255, 255, 255, 0} // Color.White
+		return color.RGBA64{65535, 65535, 65535, 65535}
 	}
 
 	var rSum, gSum, bSum uint32 = 0, 0, 0
@@ -92,14 +85,14 @@ func BlendColors(colors []color.RGBA) color.RGBA {
 		bSum += b
 	}
 
-	r := uint8(rSum / uint32(len(colors)))
-	g := uint8(gSum / uint32(len(colors)))
-	b := uint8(bSum / uint32(len(colors)))
+	r := uint16(rSum / uint32(len(colors)))
+	g := uint16(gSum / uint32(len(colors)))
+	b := uint16(bSum / uint32(len(colors)))
 
-	return color.RGBA{r, g, b, 255}
+	return color.RGBA64{r, g, b, 65535}
 }
 
-func (rt *RayTracer) GetPixelColor(x int, y int) color.RGBA {
+func (rt *RayTracer) GetPixelColor(x int, y int) color.RGBA64 {
 	xd := float64(x)
 	yd := float64(y)
 
@@ -109,16 +102,16 @@ func (rt *RayTracer) GetPixelColor(x int, y int) color.RGBA {
 		yp := yd/float64(rt.viewport.Size().Y)*2 - 1
 
 		ray := rt.Scene().Camera().GetRay(xp, yp)
-		return rt.CalculateColor(ray, rt.Scene()).ToRGBA()
+		return rt.CalculateColor(ray, rt.Scene()).ToRGBA64()
 	} else {
 		samples := rt.GetRgssOffsets(rt.Scene().SamplingQuality())
-		colors := make([]color.RGBA, len(samples))
+		colors := make([]color.RGBA64, len(samples))
 		for i, sample := range samples {
 			xp := (xd+sample.X)/float64(rt.viewport.Size().X)*2 - 1
 			yp := (yd+sample.Y)/float64(rt.viewport.Size().Y)*2 - 1
 
 			ray := rt.Scene().Camera().GetRay(xp, yp)
-			colors[i] = rt.CalculateColor(ray, rt.Scene()).ToRGBA()
+			colors[i] = rt.CalculateColor(ray, rt.Scene()).ToRGBA64()
 		}
 		return BlendColors(colors)
 	}
@@ -232,7 +225,7 @@ func (rt *RayTracer) RayTrace(intersectionInfo *IntersectionInfo, ray Ray, scene
 	}
 
 	// normalize the color
-	color.Limit()
+	color = color.Limit()
 	return color
 }
 
@@ -278,7 +271,7 @@ func (rt *RayTracer) GetRefractionRay(p Vector, n Vector, v Vector, refraction f
 	// if (c2 < 0)
 
 	c2 = math.Sqrt(c2)
-	t := (n.MultiplyFloat(refraction*c1 - c2).Subtract(v.MultiplyFloat(refraction)).MultiplyFloat(-1.0))
+	t := (n.MultiplyFloat(refraction*c1 - c2).Subtract(v.MultiplyFloat(refraction))).MultiplyFloat(-1.0)
 	t.Normalize()
 
 	return Ray{p, t} // no refraction

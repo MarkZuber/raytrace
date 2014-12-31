@@ -50,6 +50,10 @@ func (sm *Material) HasTexture() bool {
 	return false
 }
 
+func (sm *Material) GetBaseColor() DoubleColor {
+	return sm.color
+}
+
 func (sm *Material) GetColor(u float64, v float64) DoubleColor {
 	return sm.color
 }

@@ -1,6 +1,8 @@
 package raytrace
 
-import ()
+import (
+	"fmt"
+)
 
 type Camera struct {
 	position Vector
@@ -52,4 +54,8 @@ func (c *Camera) GetRay(vx float64, vy float64) Ray {
 
 	ray := Ray{position: pos, direction: dir.Normalize()}
 	return ray
+}
+
+func (c *Camera) String() string {
+	return fmt.Sprintf("(Camera Pos %v LookAt %v Equator %v  Up %v  Screen %v )", c.Position(), c.LookAt(), c.Equator(), c.Up(), c.Screen())
 }

@@ -1,6 +1,8 @@
 package raytrace
 
-import ()
+import (
+	"fmt"
+)
 
 type Scene struct {
 	samplingQuality  int
@@ -84,4 +86,12 @@ func CreateScene() *Scene {
 		renderRefraction: true,
 		camera:           CreateCameraDefaultUp(Vector{0, 0, -5}, Vector{0, 0, 1}),
 		background:       CreateBackground(DoubleColor{0, 0, .5}, 0.2)}
+}
+
+func (s *Scene) String() string {
+	str := fmt.Sprintf("Scene: Diffuse(%v) Highlights(%v) Reflections(%v) Refraction(%v) Shadow (%v) NumLights (%d) NumShapes (%d)",
+		s.RenderDiffuse(), s.RenderHighlights(), s.RenderReflection(), s.RenderRefraction(), s.RenderShadow(), len(s.Lights()), len(s.Shapes()))
+
+	str += fmt.Sprintf(" Camera (%v)", s.Camera())
+	return str
 }

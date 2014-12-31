@@ -1,7 +1,5 @@
 package raytrace
 
-import ()
-
 type IntersectionInfo struct {
 	// indicates if the shape was hit
 	isHit bool

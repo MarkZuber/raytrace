@@ -11,58 +11,70 @@ type Scene struct {
 	renderReflection bool
 	renderRefraction bool
 
-	background Background
-	camera     Camera
+	background *Background
+	camera     *Camera
 	shapes     []IShape
-	lights     []Light
+	lights     []*Light
 }
 
-func (s Scene) SamplingQuality() int {
+func (s *Scene) SamplingQuality() int {
 	return s.samplingQuality
 }
 
-func (s Scene) RayDepth() int {
+func (s *Scene) RayDepth() int {
 	return s.rayDepth
 }
 
-func (s Scene) Camera() Camera {
+func (s *Scene) Camera() *Camera {
 	return s.camera
 }
 
-func (s Scene) Background() Background {
+func (s *Scene) SetCamera(value *Camera) {
+	s.camera = value
+}
+
+func (s *Scene) Background() *Background {
 	return s.background
 }
 
-func (s Scene) Lights() []Light {
+func (s *Scene) Lights() []*Light {
 	return s.lights
 }
 
-func (s Scene) Shapes() []IShape {
+func (s *Scene) AddLight(light *Light) {
+	s.lights = append(s.lights, light)
+}
+
+func (s *Scene) Shapes() []IShape {
 	return s.shapes
 }
 
-func (s Scene) RenderDiffuse() bool {
+func (s *Scene) AddShape(shape IShape) {
+	s.shapes = append(s.shapes, shape)
+}
+
+func (s *Scene) RenderDiffuse() bool {
 	return s.renderDiffuse
 }
 
-func (s Scene) RenderHighlights() bool {
+func (s *Scene) RenderHighlights() bool {
 	return s.renderHighlights
 }
 
-func (s Scene) RenderReflection() bool {
+func (s *Scene) RenderReflection() bool {
 	return s.renderReflection
 }
 
-func (s Scene) RenderRefraction() bool {
+func (s *Scene) RenderRefraction() bool {
 	return s.renderRefraction
 }
 
-func (s Scene) RenderShadow() bool {
+func (s *Scene) RenderShadow() bool {
 	return s.renderShadow
 }
 
-func CreateScene() Scene {
-	return Scene{
+func CreateScene() *Scene {
+	return &Scene{
 		samplingQuality:  0,
 		rayDepth:         3,
 		renderDiffuse:    true,

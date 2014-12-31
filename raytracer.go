@@ -13,7 +13,11 @@ type Point struct {
 
 type RayTracer struct {
 	viewport image.Rectangle
-	scene    Scene
+	scene    *Scene
+}
+
+func CreateRayTracer(viewport image.Rectangle, scene *Scene) *RayTracer {
+	return &RayTracer{viewport, scene}
 }
 
 func (rt *RayTracer) SimpleRender(image *image.RGBA) {
@@ -33,11 +37,11 @@ func (rt *RayTracer) Viewport() image.Rectangle {
 	return rt.viewport
 }
 
-func (rt *RayTracer) SetScene(scene Scene) {
+func (rt *RayTracer) SetScene(scene *Scene) {
 	rt.scene = scene
 }
 
-func (rt *RayTracer) Scene() Scene {
+func (rt *RayTracer) Scene() *Scene {
 	return rt.scene
 }
 
@@ -123,7 +127,7 @@ func (rt *RayTracer) GetPixelColor(x int, y int) color.RGBA {
 // this implementation is used for debugging purposes.
 // the color is calculated following the normal raytrace procedure
 // execpt it is calculated for 1 particula ray
-func (rt *RayTracer) CalculateColor(ray Ray, scene Scene) DoubleColor {
+func (rt *RayTracer) CalculateColor(ray Ray, scene *Scene) DoubleColor {
 	intersectionInfo := rt.TestIntersection(ray, scene, nil)
 	if intersectionInfo.IsHit() {
 		c := rt.RayTrace(intersectionInfo, ray, scene, 0)
@@ -142,7 +146,7 @@ func (rt *RayTracer) CalculateColor(ray Ray, scene Scene) DoubleColor {
 // - Gloss lighting
 // - shadows
 // - reflections
-func (rt *RayTracer) RayTrace(intersectionInfo IntersectionInfo, ray Ray, scene Scene, depth int) DoubleColor {
+func (rt *RayTracer) RayTrace(intersectionInfo *IntersectionInfo, ray Ray, scene *Scene, depth int) DoubleColor {
 	// calculate ambient light
 	color := intersectionInfo.Color().MultiplyFloat(scene.Background().Ambience())
 	shininess := math.Pow(10, intersectionInfo.Element().Material().Gloss()+1)
@@ -198,7 +202,7 @@ func (rt *RayTracer) RayTrace(intersectionInfo IntersectionInfo, ray Ray, scene 
 			}
 		}
 
-		shadow := IntersectionInfo{}
+		shadow := &IntersectionInfo{}
 		if scene.RenderShadow() {
 			// calculate shadow, create ray from intersection point to light
 			shadowray := Ray{intersectionInfo.Position(), v}
@@ -235,9 +239,9 @@ func (rt *RayTracer) RayTrace(intersectionInfo IntersectionInfo, ray Ray, scene 
 // this method tests for an intersection. It will try to find the closest
 // object that intersects with the ray.
 // it will inspect every object in the scene. also here there is room for increased performance.
-func (rt *RayTracer) TestIntersection(ray Ray, scene Scene, exclude IShape) IntersectionInfo {
+func (rt *RayTracer) TestIntersection(ray Ray, scene *Scene, exclude IShape) *IntersectionInfo {
 	hitcount := 0
-	best := IntersectionInfo{}
+	best := &IntersectionInfo{}
 	best.SetDistance(math.MaxFloat64)
 
 	for _, elt := range scene.Shapes() {

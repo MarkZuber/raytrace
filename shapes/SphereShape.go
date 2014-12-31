@@ -6,12 +6,17 @@ import (
 )
 
 type SphereShape struct {
-	Shape
+	raytrace.Shape
 	radius float64
 }
 
-func (ss *SphereShape) Intersect(ray raytrace.Ray) raytrace.IntersectionInfo {
-	info := raytrace.IntersectionInfo{}
+func CreateSphereShape(position raytrace.Vector, material raytrace.IMaterial, radius float64) *SphereShape {
+	shape := raytrace.CreateShape(position, material)
+	return &SphereShape{*shape, radius}
+}
+
+func (ss *SphereShape) Intersect(ray raytrace.Ray) *raytrace.IntersectionInfo {
+	info := &raytrace.IntersectionInfo{}
 	info.SetElement(ss)
 
 	dst := ray.Position().Subtract(ss.Position())
@@ -24,12 +29,12 @@ func (ss *SphereShape) Intersect(ray raytrace.Ray) raytrace.IntersectionInfo {
 		info.SetIsHit(true)
 		info.SetDistance(-b - math.Sqrt(d))
 		info.SetPosition(ray.Position().Add(ray.Direction().MultiplyFloat(info.Distance())))
-		info.SetNormal(info.Position().Subtract(ss.position).Normalize())
+		info.SetNormal(info.Position().Subtract(ss.Position()).Normalize())
 
-		if ss.material.HasTexture() {
-			vn := raytrace.CreateVector(0, 1, 0).Normalize()        // north pole / up
-			ve := raytrace.CreateVector(0, 0, 1).Normalize()        // equator / sphere orientation
-			vp := info.Position().Subtract(ss.position).Normalize() // points from center of sphere to intersection
+		if ss.Material().HasTexture() {
+			vn := raytrace.CreateVector(0, 1, 0).Normalize()          // north pole / up
+			ve := raytrace.CreateVector(0, 0, 1).Normalize()          // equator / sphere orientation
+			vp := info.Position().Subtract(ss.Position()).Normalize() // points from center of sphere to intersection
 
 			phi := math.Acos(-vp.Dot(vn))
 			v := (phi * 2 / math.Pi) - 1

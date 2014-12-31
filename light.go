@@ -11,6 +11,10 @@ type Light struct {
 	strength float64
 }
 
+func CreateLight(position Vector, color DoubleColor) *Light {
+	return &Light{position, color, 10}
+}
+
 func (l *Light) Position() Vector {
 	return l.position
 }

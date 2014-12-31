@@ -23,6 +23,10 @@ func (dc DoubleColor) B() float64 {
 	return dc.b
 }
 
+func CreateDoubleColor(r float64, g float64, b float64) DoubleColor {
+	return DoubleColor{r, g, b}
+}
+
 // implement the Color interface from image/color
 func (dc DoubleColor) RGBA() (r, g, b, a uint32) {
 	return dc.ToRGBA().RGBA()

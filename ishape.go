@@ -11,5 +11,5 @@ type IShape interface {
 
 	// this method is to be implemented by each element seperately. This is the core
 	// function of each element, to determine the intersection with a ray.
-	Intersect(ray Ray) IntersectionInfo
+	Intersect(ray Ray) *IntersectionInfo
 }

@@ -15,6 +15,6 @@ func (b Background) Ambience() float64 {
 	return b.ambience
 }
 
-func CreateBackground(color DoubleColor, ambience float64) Background {
-	return Background{color, ambience}
+func CreateBackground(color DoubleColor, ambience float64) *Background {
+	return &Background{color, ambience}
 }
